@@ -2,8 +2,10 @@ const PERMISSIONS = require('./permissions.json');
 const cheerio = require('cheerio');
 const request = require('request');
 const Discord = require('discord.js');
+const randompuppy = require('random-puppy');
 const client = new Discord.Client();
 const token = PERMISSIONS['permissions'];
+const nodefetch = require('node-fetch');
 const PREFIX = '!';
 const exercises = [''];
 client.login(token);
@@ -33,8 +35,28 @@ client.on("message", msg => {
             
             
             break;
+
+        case 'motivation':
+            msg.channel.startTyping();
+            const subreddits = ["GetMotivated", "GetDisciplined", "DecidingToBeBetter", "motivation", "inspiration", "motivateme", "fitness", "NoFap"];
+            var rand = subreddits[Math.floor(Math.random() * subreddits.length)];
+            randompuppy(rand).then(url => {
+                nodefetch(url).then(async res =>{
+                    await msg.channel.send("From /r/" + rand + '\n', {
+                        files: [{
+                            attachment: res.body,
+                            name: 'mot.png'
+                        }]
+                    }).then(() => msg.channel.stopTyping());
+                }).catch(err => console.error(err));
+            }).catch(err => console.error(err));
+
+            
+            
+            break;
+
         case 'help':
-            msg.reply("COMMANDS FOR FITBOT\n1) !minute - get a random exercise to do for a minute\n2) ");
+            msg.reply("COMMANDS FOR FITBOT\n1) !minute - get a random exercise to do for a minute\n2) !motivation - get a motivational quote\n");
 
             break;
 
