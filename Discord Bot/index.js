@@ -10,6 +10,8 @@ const PREFIX = '!';
 const exercises = [''];
 client.login(token);
 
+
+
 client.on('ready', ()=> {
     console.log("This bot is online");
 });
@@ -31,8 +33,11 @@ client.on("message", msg => {
             embed.setTitle("WHAT's UP BROTHEERR")
             .setColor(0xf82033)
             .addField("For the next 60 seconds...", "You will do " + ex, true);
-            msg.channel.send(embed);
-            
+            msg.reply(embed);
+            setTimeout(function(){ 
+                msg.reply("DONE");
+            }, 60000);
+
             
             break;
 
