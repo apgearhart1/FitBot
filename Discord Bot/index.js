@@ -5,9 +5,16 @@ const Discord = require('discord.js');
 const randompuppy = require('random-puppy');
 const client = new Discord.Client();
 const token = PERMISSIONS['permissions'];
+const youtubeAPI = PERMISSIONS['YouTube-API'];
 const nodefetch = require('node-fetch');
+const search = require('youtube-search');
 const PREFIX = '!';
-const exercises = [''];
+const options = {
+    key: youtubeAPI,
+    type: 'video',
+    videoDuration: 'medium',
+    maxResults: 1
+}
 client.login(token);
 
 
@@ -23,7 +30,7 @@ client.on("message", msg => {
     
     const embed = new Discord.MessageEmbed();
     const exercises = ["High Knees", "Mountain Climbers", "Push-ups", "Jumping Jacks", "Squats", "Pull-ups", "Burpees", "Lunges", "Jump Squats", "Jump Lunges", "Calf Raises", "Flutter Kicks", "Bicycles", "Wall Sits", "Plank"];
-
+    const ytSearch = ['motivational videos', 'get things done', 'movie workout montages', 'motivational movie scenes', 'motivational speeches'];
 
     
     switch(args[0]){
@@ -55,13 +62,31 @@ client.on("message", msg => {
                     }).then(() => msg.channel.stopTyping());
                 }).catch(err => console.error(err));
             }).catch(err => console.error(err));
+            break;
+        
+        case 'search':
+            async function searching() {
+                let filter = m => m.author.id === msg.author.id;
+                let col =  msg.channel.createMessageCollector(filter, {max:1});
+                let query = ytSearch[Math.floor(Math.random() * ytSearch.length)];
+                let res = await search(query, options).catch(err => console.log(err));
+                if(res){
+                    let youtubeResult = res.results[0];
 
-            
+                    embed.setTitle(`${youtubeResult.title}`)
+                    .setColor(0xa83246)
+                    .setURL(`${youtubeResult.link}`)
+                    .setThumbnail(`${youtubeResult.thumbnails.default.url}`);
+                    msg.channel.send(embed);
+                }
+            }
+            searching();
+
             
             break;
 
         case 'help':
-            msg.reply("COMMANDS FOR FITBOT\n1) !minute - get a random exercise to do for a minute\n2) !motivation - get a motivational quote\n");
+            msg.reply("**COMMANDS FOR FITBOT**\n1) *!minute* - get a random exercise to do for a minute\n2) *!motivation* - get a motivational quote\n3) *!search* - get a random video");
 
             break;
 
